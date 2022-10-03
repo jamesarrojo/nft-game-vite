@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import SelectCharacter from './components/SelectCharacter';
 
 
 
@@ -8,6 +9,9 @@ function App() {
 
   // state variable to store user's public wallet
   const [currentAccount, setCurrentAccount] = useState(null);
+
+  // state vriable to store user's character NFT
+  const [characterNFT, setCharacterNFT] = useState(null)
 
   // function that checks if we have metamask
   const checkIfWalletIsConnected = async () => {
@@ -36,6 +40,30 @@ function App() {
       }
     } catch(error) {
       console.log(error)
+    }
+  }
+
+  // render methods
+  const renderContent = () => {
+    // scenario 1
+    if (!currentAccount) {
+      return (
+        <div className="connect-wallet-container">
+          <img
+            src="https://www.gifcen.com/wp-content/uploads/2022/06/avengers-assemble-gif-3.gif"
+            alt="Avengers Assemble Gif"
+          />
+          <button
+            className='cta-button connect-wallet-button'
+            onClick={connectWalletAction}
+          >
+            Connect Wallet to Get Started
+          </button>
+        </div>
+      )
+      // scenario 2
+    } else if (currentAccount && !characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />
     }
   }
 
@@ -73,18 +101,7 @@ function App() {
         <div className="header-container">
           <p className="header gradient-text">⚔️ Metaverse Slayer ⚔️</p>
           <p className="sub-text">Team up to protect the Metaverse!</p>
-          <div className="connect-wallet-container">
-            <img
-              src="https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv"
-              alt="Monty Python Gif"
-            />
-            <button
-              className='cta-button connect-wallet-button'
-              onClick={connectWalletAction}
-            >
-              Connect Wallet to Get Started
-            </button>
-          </div>
+          {renderContent()}
         </div>
         {/* <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
