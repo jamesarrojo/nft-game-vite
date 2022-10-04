@@ -73,6 +73,7 @@ const SelectCharacter = ({ setCharacterNFT }) => {
           const characterNFT = await gameContract.checkIfUserHasNFT();
           console.log('CharacterNFT: ', characterNFT);
           setCharacterNFT(transformCharacterData(characterNFT));
+          alert(`Your NFT is all done -- see it here: https://goerli.pixxiti.com/nfts/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`)
         }
       }
       
