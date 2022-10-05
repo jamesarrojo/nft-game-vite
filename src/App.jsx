@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import SelectCharacter from './components/SelectCharacter';
 import Arena from './components/Arena'
+import LoadingIndicator from "./components/LoadingIndicator"
 import myEpicGame from "./utils/MyEpicGame.json"
 import { ethers } from 'ethers';
 import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
@@ -17,6 +18,9 @@ function App() {
   // state vriable to store user's character NFT
   const [characterNFT, setCharacterNFT] = useState(null)
 
+  // loading indicators state property
+  const [isLoading, setIsLoading] = useState(false)
+
   // function that checks if we have metamask
   const checkIfWalletIsConnected = async () => {
     try {
@@ -25,6 +29,8 @@ function App() {
   
       if (!ethereum) {
         console.log("Make sure you have MetaMask!");
+        // we set isLoading here because we use return in the next line
+        setIsLoading(false)
         return
       } else {
         console.log('We have the ethereum object', ethereum)
@@ -45,10 +51,17 @@ function App() {
     } catch(error) {
       console.log(error)
     }
+
+    // we release the state property after all the function logic
+    setIsLoading(false)
   }
 
   // render methods
   const renderContent = () => {
+    // if the app is currently loading
+    if (isLoading) {
+      return <LoadingIndicator />
+    }
     // scenario 1
     if (!currentAccount) {
       return (
@@ -111,6 +124,7 @@ function App() {
 
   // runs the checkIfWalletIsConnected() when the page loads
   useEffect(() => {
+    setIsLoading(true)
     checkIfWalletIsConnected();
   }, [])
 
@@ -129,14 +143,15 @@ function App() {
         signer
       );
   
-      const txn = await gameContract.checkIfUserHasNFT();
-      // console.log(txn)
-      if (txn.name) {
+      const characterNFT = await gameContract.checkIfUserHasNFT();
+      
+      if (characterNFT.name) {
         console.log('User has character NFT');
-        setCharacterNFT(transformCharacterData(txn));
-      } else {
-        console.log('No character NFT found');
+        setCharacterNFT(transformCharacterData(characterNFT));
       }
+
+      // once we are done with all the fetching, set Loading state to false
+      setIsLoading(false)
     };
   
     /*
@@ -156,7 +171,7 @@ function App() {
     <div className="App">
        <div className="container">
         <div className="header-container">
-          <p className="header gradient-text">⚔️ Metaverse Slayer ⚔️</p>
+          <p className="header gradient-text">⚔️ Us vs The Forces of Evil ⚔️</p>
           <p className="sub-text">Team up to protect the Metaverse!</p>
           {renderContent()}
         </div>
