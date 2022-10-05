@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import SelectCharacter from './components/SelectCharacter';
+import Arena from './components/Arena'
 import myEpicGame from "./utils/MyEpicGame.json"
 import { ethers } from 'ethers';
 import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
@@ -67,6 +68,10 @@ function App() {
       // scenario 2
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />
+
+      // If there is a connected wallet and characterNFT, it's time to battle!
+    } else if (currentAccount && characterNFT) {
+      return <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} currentAccount={currentAccount} />
     }
   }
 
